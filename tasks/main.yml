@@ -1,0 +1,50 @@
+---
+- name: Ensure config directory
+  file:
+    state: directory
+    path: "{{ alertmanager_config_dir }}"
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Ensure configuration file
+  template:
+    src: alertmanager.yml.j2
+    dest: "{{ alertmanager_config_dir }}/alertmanager.yml"
+    mode: 0755
+    owner: root
+    group: root
+  register: alertmanager_config
+
+- name: Include alertmanager-bot tasks
+  include_tasks: alertmanager_telegram_bot.yml
+  tags:
+    - alertmanager
+    - alertmanager-telegram
+    - telegram-bot
+  loop: "{{ alertmanager_telegram_bots }}"
+  loop_control:
+    loop_var: bot
+
+- name: Start docker alertmanager container
+  docker_service:
+    state: present
+    project_name: alertmanager
+    restarted: "{{ 'yes' if alertmanager_config.changed else 'no' }}"
+    definition:
+      version: '2'
+      services:
+        alertmanager:
+          image: "{{ alertmanager_docker_image }}"
+          container_name: "{{ alertmanager_container_name }}"
+          ports:
+            - "127.0.0.1:9093:9093"
+          volumes:
+            - "{{ alertmanager_config_dir }}/:/etc/alertmanager"
+          hostname: "{{ alertmanager_container_name }}"
+          restart: always
+          labels: "{{ alertmanager_docker_labels }}"
+      networks:
+        default:
+          external:
+            name: "{{ alertmanager_docker_network_name }}"
