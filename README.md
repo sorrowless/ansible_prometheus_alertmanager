@@ -1,9 +1,9 @@
 # sbog/prometheus_alertmanager
 
 [![Build Status](https://travis-ci.com/sorrowless/ansible_prometheus_alertmanager.svg?branch=master)](https://travis-ci.com/sorrowless/ansible_prometheus_alertmanager)
-[![Ansible Role](https://img.shields.io/ansible/role/54493)](https://galaxy.ansible.com/sorrowless/prometheus_alertmanager)
-[![Ansible Quality Score](https://img.shields.io/ansible/quality/54493)](https://galaxy.ansible.com/sorrowless/prometheus_alertmanager)
-[![Ansible Role](https://img.shields.io/ansible/role/d/54493)](https://galaxy.ansible.com/sorrowless/prometheus_alertmanager)
+[![Ansible Role](https://img.shields.io/ansible/role/54505)](https://galaxy.ansible.com/sorrowless/prometheus_alertmanager)
+[![Ansible Quality Score](https://img.shields.io/ansible/quality/54505)](https://galaxy.ansible.com/sorrowless/prometheus_alertmanager)
+[![Ansible Role](https://img.shields.io/ansible/role/d/54505)](https://galaxy.ansible.com/sorrowless/prometheus_alertmanager)
 [![GitHub](https://img.shields.io/github/license/sorrowless/ansible_prometheus_alertmanager)](https://github.com/sorrowless/ansible_prometheus_alertmanager/blob/master/LICENSE)
 
 An Ansible role which installs and configures [Prometheus Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/) on Linux
