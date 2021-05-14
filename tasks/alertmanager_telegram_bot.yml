@@ -22,7 +22,7 @@
 - name: Start docker alertmanager-bot container
   docker_service:
     state: present
-    project_name: alertmanager_bot
+    project_name: "{{ bot.container_name }}"
     restarted: "{{ 'yes' if bot_config.changed else 'no' }}"
     definition:
       version: '2'
