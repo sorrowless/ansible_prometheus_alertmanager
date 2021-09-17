@@ -27,7 +27,7 @@
     loop_var: bot
 
 - name: Start docker alertmanager container
-  docker_service:
+  community.docker.docker_compose:
     state: present
     project_name: alertmanager
     restarted: "{{ 'yes' if alertmanager_config.changed else 'no' }}"

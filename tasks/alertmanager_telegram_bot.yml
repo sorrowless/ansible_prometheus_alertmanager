@@ -20,7 +20,7 @@
   register: bot_config
 
 - name: Start docker alertmanager-bot container
-  docker_service:
+  community.docker.docker_compose:
     state: present
     project_name: "{{ bot.container_name }}"
     restarted: "{{ 'yes' if bot_config.changed else 'no' }}"
