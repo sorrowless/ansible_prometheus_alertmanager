@@ -1,0 +1,5 @@
+---
+- name: Reload alertmanager
+  uri:
+    url: "{{ alertmanager_reload_url }}"
+    method: POST

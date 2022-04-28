@@ -11,12 +11,11 @@
 {{- if eq .Status "firing" }}
 <b>Status:</b> {{ .Labels.severity }} ⚡️
 <b>Summary:</b> {{ .Annotations.summary }}
-<b>Started:</b> {{ .StartsAt | since }} ago
+<b>Started:</b> {{ .StartsAt }} ago
 {{ else }}
 <b>Status:</b> OK 👍
 <b>Summary:</b> {{ .Annotations.summary_resolved }}
-<b>Duration:</b> {{ duration .StartsAt .EndsAt }}
-<b>Ended:</b> {{ .EndsAt | since }} ago
+<b>Ended:</b> {{ .EndsAt }} ago
 {{ end }}
 {{- end }}
 {{- end }}

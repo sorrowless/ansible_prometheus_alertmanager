@@ -2,11 +2,12 @@
 alertmanager_docker_network_name: prom_network
 
 alertmanager_container_name: alertmanager
-alertmanager_docker_image: "prom/alertmanager:v0.21.0"
+alertmanager_docker_image: "prom/alertmanager:v0.24.0"
 alertmanager_docker_labels:
   - prometheus
   - alertmanager
 alertmanager_config_dir: /var/lib/alertmanager
+alertmanager_reload_url: 'http://127.0.0.1:9093/-/reload'
 alertmanager_config:
   global:
     resolve_timeout: 5m
@@ -30,16 +31,3 @@ alertmanager_config:
       webhook_configs:
         - send_resolved: true
           url: 'http://alertsbot_production:8080'
-alertmanager_telegram_bots: []
-  #- name: "alertmanager production telegram bot"
-  #  config_dir: /var/lib/alertmanager_bot/production
-  #  docker_image: "metalmatze/alertmanager-bot:0.4.3"
-  #  container_name: alertsbot_production
-  #  host_port: 8080
-  #  docker_labels:
-  #    - prometheus
-  #    - alertmanager
-  #    - telegram-bot
-  #    - alertmanager-bot
-  #  telegram_admin: username
-  #  telegram_token: token
