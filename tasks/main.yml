@@ -43,8 +43,10 @@
         alertmanager:
           image: "{{ alertmanager_docker_image }}"
           container_name: "{{ alertmanager_container_name }}"
+          command: "{{ alertmanager_command }}"
           ports:
             - "127.0.0.1:9093:9093"
+            - "127.0.0.1:9094:9094"
           volumes:
             - "{{ alertmanager_config_dir }}/:/etc/alertmanager"
           hostname: "{{ alertmanager_container_name }}"
