@@ -8,6 +8,7 @@ alertmanager_docker_labels:
   - alertmanager
 alertmanager_config_dir: /var/lib/alertmanager
 alertmanager_reload_url: 'http://127.0.0.1:9093/-/reload'
+alertmanager_command: []
 alertmanager_config:
   global:
     resolve_timeout: 5m
