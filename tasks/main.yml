@@ -57,3 +57,51 @@
         default:
           external:
             name: "{{ alertmanager_docker_network_name }}"
+  when: not alertmanager_swarm_cluster or vm_swarm_manager is undefined
+
+- name: Deploy alertmanager to docker swarm
+  block:
+    - name: Ensure pip installation
+      package:
+        name: "python3-pip"
+        state: present
+
+    - name: Install newer version of pip itself
+      pip:
+        name: "pip"
+        state: latest
+        executable: pip3
+
+    - name: Install jsondiff from pip
+      pip:
+        name: "jsondiff"
+        state: present
+        executable: pip3
+
+    - name: Deploy docker alertmanager container in swarm
+      community.docker.docker_stack:
+        state: present
+        name: "{{ alertmanager_stack_name }}"
+        compose:
+          - version: '3.5'
+            services:
+              alertmanager:
+                image: "{{ alertmanager_docker_image }}"
+                command: "{{ alertmanager_command }}"
+                hostname: "{{ alertmanager_container_name }}"
+                labels: "{{ alertmanager_docker_labels }}"
+                volumes:
+                  - "{{ alertmanager_config_dir }}/:/etc/alertmanager"
+                deploy: "{{ alertmanager_swarm_deploy }}"
+                ports:
+                  - "9093:9093"
+                  - "9094:9094"
+                  - "9094:9094/udp"
+            networks:
+              default:
+                external:
+                  name: "{{ alertmanager_docker_network_name }}"
+  delegate_to: "{{ vm_swarm_manager }}"
+  when:
+    - alertmanager_swarm_cluster
+    - vm_swarm_manager is defined
