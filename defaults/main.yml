@@ -1,6 +1,4 @@
 ---
-alertmanager_docker_network_name: prom_network
-
 alertmanager_container_name: alertmanager
 alertmanager_docker_image: "prom/alertmanager:v0.27.0"
 alertmanager_docker_labels:
@@ -60,3 +58,7 @@ alertmanager_swarm_deploy:
 #       memory: 128M
 #     reservations:
 #       memory: 64M
+
+alertmanager_docker_networks:
+  prom_network:
+    external: true
