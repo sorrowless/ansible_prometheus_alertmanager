@@ -51,10 +51,9 @@
           hostname: "{{ alertmanager_container_name }}"
           restart: always
           labels: "{{ alertmanager_docker_labels }}"
-      networks:
-        default:
-          external: true
-          name: "{{ alertmanager_docker_network_name }}"
+          networks: "{{ alertmanager_docker_networks.keys() | list }}"
+      networks: "{{ alertmanager_docker_networks }}"
+
   when: not alertmanager_swarm_cluster or vm_swarm_manager is undefined
 
 - name: Deploy alertmanager to docker swarm
@@ -95,10 +94,7 @@
                   - "9093:9093"
                   - "9094:9094"
                   - "9094:9094/udp"
-            networks:
-              default:
-                external:
-                  name: "{{ alertmanager_docker_network_name }}"
+            networks: "{{ alertmanager_docker_networks }}"
   delegate_to: "{{ vm_swarm_manager }}"
   when:
     - alertmanager_swarm_cluster
