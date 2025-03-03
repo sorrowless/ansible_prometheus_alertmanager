@@ -33,12 +33,10 @@
   register: alertmanager_config
 
 - name: Start docker alertmanager container
-  community.docker.docker_compose:
-    state: present
+  community.docker.docker_compose_v2:
+    state: "{{ 'restarted' if alertmanager_config.changed else 'present' }}"
     project_name: alertmanager
-    restarted: "{{ 'yes' if alertmanager_config.changed else 'no' }}"
     definition:
-      version: '2'
       services:
         alertmanager:
           image: "{{ alertmanager_docker_image }}"
@@ -55,6 +53,7 @@
           labels: "{{ alertmanager_docker_labels }}"
           networks: "{{ alertmanager_docker_networks.keys() | list }}"
       networks: "{{ alertmanager_docker_networks }}"
+
   when: not alertmanager_swarm_cluster or vm_swarm_manager is undefined
 
 - name: Deploy alertmanager to docker swarm
