@@ -17,15 +17,15 @@
   {{- $desc := "" -}}
   {{- $summary := "" -}}
   {{- $started := .StartsAt.Local.Format "2006-01-02 15:04:05" }}
-  {{- $ended := "<b>not</b>" }}
-  {{- if eq .Status "firing" -}}{{- $ended = .EndsAt.Local.Format "2006-01-02 15:04:05" -}}{{- end -}}
+  {{- $ended := .EndsAt.Local.Format "2006-01-02 15:04:05" }}
+  {{- if eq .Status "firing" -}}{{- $ended = "<b>not</b>" -}}{{- end -}}
   {{- if .Annotations.description -}}
     {{- $desc = printf " — %.180s" .Annotations.description -}}
   {{- end -}}
     {{- if .Annotations.summary -}}
     {{- $summary = printf " — %.180s" .Annotations.summary -}}
   {{- end -}}
-  {{- $line := printf "%s <b>%s</b> (%s)%s\nStarted: %s  Ended: %s\n\n" $icon $name $sev $summary $started $ended -}}
+  {{- $line := printf "%s <b>%s</b> (%s)%s\nStarted: %s; Ended: %s\n\n" $icon $name $sev $summary $started $ended -}}
 
   {{- if le (len (print $msg $line)) $maxLen -}}
     {{- $msg = print $msg $line -}}
@@ -45,7 +45,7 @@
   {{- $msg = printf "%.4096s" $msg -}}
 {{- end -}}
 {{- if gt (len $msg) 0 -}}
-{{ $msg }}
+{{ $msg | safeHtml }}
 {{- else -}}
 Alertmanager notification
 {{- end -}}
