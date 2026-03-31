@@ -16,14 +16,23 @@
   {{- $sev := .Labels.severity -}}
   {{- $desc := "" -}}
   {{- $summary := "" -}}
+  {{- if .Annotations.summary -}}
+    {{- if eq .Status "firing" -}}
+      {{- $summary = printf " — %.180s" .Annotations.summary -}}
+    {{- else -}}
+      {{- if .Annotations.summary_resolved -}}
+        {{- $summary = printf " — %.180s" .Annotations.summary_resolved -}}
+      {{- else -}}
+        {{- $summary = " - resolved" -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+
   {{- $started := .StartsAt.Local.Format "2006-01-02 15:04:05" }}
   {{- $ended := .EndsAt.Local.Format "2006-01-02 15:04:05" }}
   {{- if eq .Status "firing" -}}{{- $ended = "<b>not</b>" -}}{{- end -}}
   {{- if .Annotations.description -}}
     {{- $desc = printf " — %.180s" .Annotations.description -}}
-  {{- end -}}
-    {{- if .Annotations.summary -}}
-    {{- $summary = printf " — %.180s" .Annotations.summary -}}
   {{- end -}}
   {{- $line := printf "%s <b>%s</b> (%s)%s\nStarted: %s; Ended: %s\n\n" $icon $name $sev $summary $started $ended -}}
 
