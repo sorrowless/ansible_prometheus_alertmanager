@@ -1,21 +1,52 @@
-{{ define "telegram.default" }}
-{{ range .Alerts }}
+{{/*
+  Telegram message template with hard 4096 chars limit.
+  Builds a compact message and appends alerts only while it fits.
+*/}}
 
-{{ if eq .Status "firing"}}<b>Alert Created</b> 😱{{ else }}<b>Alert Resolved</b> 😍{{ end }}
-{{- if eq .Labels.dns_hostname "" }}
-<b>Host:</b> {{ .Labels.instance }} ({{ .Labels.ipaddress }})
-{{- else }}
-<b>Host:</b> {{ .Labels.dns_hostname }} ({{ .Labels.ipaddress }})
-{{- end }}
-<b>Alert Name:</b> {{ .Labels.alertname }}
-{{- if eq .Status "firing" }}
-<b>Status:</b> {{ .Labels.severity }} ⚡️
-<b>Summary:</b> {{ .Annotations.summary }}
-<b>Started:</b> {{ .StartsAt }}
-{{ else }}
-<b>Status:</b> OK 👍
-<b>Summary:</b> {{ .Annotations.summary_resolved }}
-<b>Ended:</b> {{ .EndsAt }}
-{{ end }}
-{{- end }}
-{{- end }}
+{{- define "telegram.default.message" -}}
+{{- $maxLen := 4096 -}}
+{{- $head := printf "(%d) messages received\n" (len .Alerts) -}}
+{{- $msg := $head -}}
+{{- $truncated := false -}}
+
+{{- range .Alerts -}}
+  {{- $icon := "✅" -}}
+  {{- if eq .Status "firing" -}}{{- $icon = "🔥" -}}{{- end -}}
+  {{- $name := .Labels.alertname -}}
+  {{- $sev := .Labels.severity -}}
+  {{- $desc := "" -}}
+  {{- $summary := "" -}}
+  {{- $started := .StartsAt.Local.Format "2006-01-02 15:04:05" }}
+  {{- $ended := "<b>not</b>" }}
+  {{- if eq .Status "firing" -}}{{- $ended = .EndsAt.Local.Format "2006-01-02 15:04:05" -}}{{- end -}}
+  {{- if .Annotations.description -}}
+    {{- $desc = printf " — %.180s" .Annotations.description -}}
+  {{- end -}}
+    {{- if .Annotations.summary -}}
+    {{- $summary = printf " — %.180s" .Annotations.summary -}}
+  {{- end -}}
+  {{- $line := printf "%s <b>%s</b> (%s)%s\nStarted: %s  Ended: %s\n\n" $icon $name $sev $summary $started $ended -}}
+
+  {{- if le (len (print $msg $line)) $maxLen -}}
+    {{- $msg = print $msg $line -}}
+  {{- else -}}
+    {{- $truncated = true -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if $truncated -}}
+  {{- $suffix := "\n⚠️ Message truncated." -}}
+  {{- if le (len (print $msg $suffix)) $maxLen -}}
+    {{- $msg = print $msg $suffix -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if gt (len $msg) $maxLen -}}
+  {{- $msg = printf "%.4096s" $msg -}}
+{{- end -}}
+{{- if gt (len $msg) 0 -}}
+{{ $msg }}
+{{- else -}}
+Alertmanager notification
+{{- end -}}
+{{- end -}}
